@@ -46,19 +46,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const targets = elements.filter(Boolean);
 
-        if (!targets.length) return;
-
-        if (typeof window.MathJax.typesetClear === 'function') {
+        if (typeof window.MathJax.typesetClear === 'function' && targets.length) {
             window.MathJax.typesetClear(targets);
         }
 
         if (typeof window.MathJax.typesetPromise === 'function') {
-            window.MathJax.typesetPromise(targets).catch(console.error);
+            window.MathJax.typesetPromise(targets.length ? targets : undefined).catch(console.error);
             return;
         }
 
         if (typeof window.MathJax.typeset === 'function') {
-            window.MathJax.typeset(targets);
+            window.MathJax.typeset(targets.length ? targets : undefined);
         }
 
     }
@@ -214,7 +212,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 action,
 
-                ...params
+                ...params,
+
+                nonce: smart_mcq_ajax.nonce
 
             })
 
@@ -296,7 +296,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 topic: selectedTopic,
 
-                attempted: attemptedQuestions
+                attempted: attemptedQuestions,
+
+                nonce: smart_mcq_ajax.nonce
 
             })
 
@@ -325,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         explanationContent.style.display = "none";
 
-        explanationText.textContent = "";
+        explanationText.innerHTML = "";
 
         explanationLink.innerHTML = "";
 
@@ -344,6 +346,10 @@ document.addEventListener("DOMContentLoaded", function () {
         nextButton.disabled = true;
 
         queueMathTypeset([questionElement, ...optionButtons]);
+
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+            window.MathJax.typesetPromise().catch(console.error);
+        }
 
     }
 
@@ -395,7 +401,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!optionSelected) {
 
-            explanationText.textContent = "Please select an answer first";
+            explanationText.innerHTML = "Please select an answer first";
 
             explanationLink.innerHTML = '';
 

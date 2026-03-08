@@ -47,6 +47,9 @@ class Smart_Mcq_Handler {
 
     public static function fetch_mediums() {
 
+        self::verify_nonce();
+
+
         global $wpdb;
 
         self::init();
@@ -66,6 +69,9 @@ class Smart_Mcq_Handler {
 
 
     public static function fetch_semesters() {
+
+        self::verify_nonce();
+
 
         self::validate_request(['medium']);
 
@@ -102,6 +108,9 @@ class Smart_Mcq_Handler {
 
 
     public static function fetch_subjects() {
+
+        self::verify_nonce();
+
 
         self::validate_request(['medium','semester']);
 
@@ -144,6 +153,9 @@ class Smart_Mcq_Handler {
 
 
     public static function fetch_chapters() {
+
+        self::verify_nonce();
+
 
         self::validate_request(['medium','semester','subject']);
 
@@ -192,6 +204,9 @@ class Smart_Mcq_Handler {
 
 
     public static function fetch_topics() {
+
+        self::verify_nonce();
+
 
         self::validate_request(['medium','semester','subject','chapter']);
 
@@ -246,6 +261,9 @@ class Smart_Mcq_Handler {
 
 
     public static function fetch_mcq() {
+
+        self::verify_nonce();
+
 
         self::validate_request(['medium','semester','subject','chapter','topic']);
 
@@ -329,6 +347,9 @@ class Smart_Mcq_Handler {
 
     public static function submit_answer() {
 
+        self::verify_nonce();
+
+
         self::validate_request(['question_id','selected_answer']);
 
 
@@ -374,6 +395,13 @@ class Smart_Mcq_Handler {
 
     }
 
+
+
+    private static function verify_nonce() {
+
+        check_ajax_referer('smart_mcq_nonce', 'nonce');
+
+    }
 
 
     private static function validate_request($required_fields) {

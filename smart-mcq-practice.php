@@ -51,13 +51,14 @@ class Smart_Mcq_Core {
             'mathjax',
             'window.MathJax = {
                 tex: {
-                    inlineMath: [["$", "$"], ["\\(", "\\)"]],
-                    displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+                    inlineMath: [["$", "$"]],
+                    displayMath: [["$$", "$$"]],
                     processEscapes: true,
-                    packages: {"[+]": ["mhchem"]}
+                    processEnvironments: true,
+                    packages: {"[+]": ["ams", "mhchem"]}
                 },
                 loader: {
-                    load: ["[tex]/mhchem"]
+                    load: ["[tex]/ams", "[tex]/mhchem"]
                 }
             };',
             'before'
