@@ -40,6 +40,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const explanationLink = document.getElementById('mcq-explanation-link');
 
 
+    function queueMathTypeset(elements = []) {
+
+        if (!window.MathJax) return;
+
+        const targets = elements.filter(Boolean);
+
+        if (!targets.length) return;
+
+        if (typeof window.MathJax.typesetClear === 'function') {
+            window.MathJax.typesetClear(targets);
+        }
+
+        if (typeof window.MathJax.typesetPromise === 'function') {
+            window.MathJax.typesetPromise(targets).catch(console.error);
+            return;
+        }
+
+        if (typeof window.MathJax.typeset === 'function') {
+            window.MathJax.typeset(targets);
+        }
+
+    }
+
+
     // Initialization
     fetchDropdownData('fetch_mediums').then(mediums => {
         populateDropdown(mediumDropdown, mediums);
@@ -295,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         currentMCQ = mcq;
 
-        questionElement.textContent = mcq.question;
+        questionElement.innerHTML = mcq.question;
 
         optionSelected = false;
 
@@ -309,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const optionKey = btn.dataset.option;
 
-            btn.textContent = `${optionKey}. ${mcq[`option_${optionKey.toLowerCase()}`]}`;
+            btn.innerHTML = `${optionKey}. ${mcq[`option_${optionKey.toLowerCase()}`]}`;
 
             btn.classList.remove("correct", "incorrect");
 
@@ -318,6 +342,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         nextButton.disabled = true;
+
+        queueMathTypeset([questionElement, ...optionButtons]);
 
     }
 
@@ -377,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-        explanationText.textContent = currentMCQ.explanation || "Explanation not available.";
+        explanationText.innerHTML = currentMCQ.explanation || "Explanation not available.";
 
         explanationText.classList.toggle('no-explanation', !currentMCQ.explanation);
 
@@ -396,6 +422,8 @@ document.addEventListener("DOMContentLoaded", function () {
             explanationLink.innerHTML = '<span class="no-link-message">No additional resources available</span>';
 
         }
+
+        queueMathTypeset([explanationText, explanationLink]);
 
     }
 

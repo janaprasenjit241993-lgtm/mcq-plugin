@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Smart MCQ Practice
  * Description: Advanced MCQ practice system with dynamic selection, timer, performance analytics, and explanation links.
- * Version: 1.2
+ * Version: 1.3
  * Author: JanaSir
  * License: GPL-2.0+
  * Text Domain: smart-mcq-practice
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('SMART_MCQ_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('SMART_MCQ_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('SMART_MCQ_VERSION', '1.2');
+define('SMART_MCQ_VERSION', '1.3');
 
 // Include core components
 require_once SMART_MCQ_PLUGIN_PATH . 'includes/class-db-handler.php';
@@ -39,6 +39,32 @@ class Smart_Mcq_Core {
 
     public static function enqueue_assets() {
 
+        wp_register_script(
+            'mathjax',
+            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+            [],
+            '3.2.2',
+            true
+        );
+
+        wp_add_inline_script(
+            'mathjax',
+            'window.MathJax = {
+                tex: {
+                    inlineMath: [["$", "$"], ["\\(", "\\)"]],
+                    displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+                    processEscapes: true,
+                    packages: {"[+]": ["mhchem"]}
+                },
+                loader: {
+                    load: ["[tex]/mhchem"]
+                }
+            };',
+            'before'
+        );
+
+        wp_enqueue_script('mathjax');
+
         wp_enqueue_style(
             'smart-mcq-style',
             SMART_MCQ_PLUGIN_URL . 'assets/style.css',
@@ -49,7 +75,7 @@ class Smart_Mcq_Core {
         wp_enqueue_script(
             'smart-mcq-script',
             SMART_MCQ_PLUGIN_URL . 'assets/script.js',
-            ['jquery'],
+            ['jquery', 'mathjax'],
             SMART_MCQ_VERSION,
             true
         );
